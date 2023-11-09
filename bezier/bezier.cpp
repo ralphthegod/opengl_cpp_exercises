@@ -9,37 +9,44 @@ const int NUM_OF_POINTS = 3;
 GLfloat initControlPoints[NUM_OF_POINTS][3] = { 
     { 0.0f, 0.0f, 0.0f },
     { 0.0f, 1.0f, 0.0f },
-    { -1.0f, 1.0f, 0.0f },
+    { 1.0f, 1.0f, 0.0f },
 };
 
-int grade = 3;
+int grade = 2;
 
-void compute_t(float t, GLfloat){
+void compute_t(float t, GLfloat* result, int grade, GLfloat controlPoints[][3], int NUM_OF_POINTS) {
     GLfloat p[NUM_OF_POINTS][3];
 
-    for(int i=0; i<NUM_OF_POINTS; i++){
-        p[i][0] = initControlPoints[i][0];
-        p[i][1] = initControlPoints[i][1];
-        p[i][2] = initControlPoints[i][2];
+    for(int i = 0; i < NUM_OF_POINTS; i++){
+        p[i][0] = controlPoints[i][0];
+        p[i][1] = controlPoints[i][1];
+        p[i][2] = controlPoints[i][2];
     }
 
-    for(int r=1; r<=grade; r++){
-        for(int i=0; i<=grade-r; i++){
-            p[i] = ((1-t) * p[i].x) + (t * p[i+1].x);
-            p[i].y = ((1-t) * p[i].y) + (t * p[i+1].y);
+    for(int r = 1; r <= grade; r++){
+        for(int i = 0; i <= grade - r; i++){
+            p[i][0] = ((1 - t) * p[i][0]) + (t * p[i + 1][0]);
+            p[i][1] = ((1 - t) * p[i][1]) + (t * p[i + 1][1]);
+            p[i][2] = ((1 - t) * p[i][2]) + (t * p[i + 1][2]);
         }
     }
-    return p[0];
+
+    result[0] = p[0][0];
+    result[1] = p[0][1];
+    result[2] = p[0][2];
 }
+
 
 void display() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     float step = 0.01f;
+    GLfloat result[3];
+
     glBegin(GL_LINE_STRIP);
         for(float t=0; t<=1; t+=step){
-            Point p = compute_t(t);
-            glVertex2f(p.x, p.y);
+            compute_t(t, result, grade, initControlPoints, NUM_OF_POINTS);
+            glVertex2f(result[0], result[1]);
         }
     glEnd();
 
