@@ -15,7 +15,7 @@ GLfloat initControlPoints[NUM_OF_POINTS][3] = {
 int grade = 2;
 
 void compute_t(float t, GLfloat* result, int grade, GLfloat controlPoints[][3], int NUM_OF_POINTS) {
-    GLfloat p[NUM_OF_POINTS][3];
+    GLfloat p[3][3];
 
     for(int i = 0; i < NUM_OF_POINTS; i++){
         p[i][0] = controlPoints[i][0];
