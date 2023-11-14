@@ -4,7 +4,8 @@
 #include <iostream>
 
 std::vector<std::vector<GLfloat>> controlPoints;
-int grade = 2;
+std::vector<std::vector<std::vector<GLfloat>>> curves;
+int grade = 4;
 
 void compute_t(float t, GLfloat* result, int grade, const std::vector<std::vector<GLfloat>>& controlPts) {
     std::vector<std::vector<GLfloat>> p = controlPts;
@@ -27,12 +28,21 @@ void mouse(int button, int state, int x, int y) {
         float winY = (float)y / (float)glutGet(GLUT_WINDOW_HEIGHT);
         winX = (winX - 0.5f) * 2.0f;
         winY = (winY - 0.5f) * 2.0f;
-        winY = -winY; // invert Y axis for mouse coordinates
+        winY = -winY;
 
         std::vector<GLfloat> point = {winX, winY, 0.0f};
-        controlPoints.push_back(point);
 
-        if(controlPoints.size() > grade){
+        if (curves.empty() || curves.back().size() > grade) {
+            std::vector<std::vector<GLfloat>> newCurve;
+            if (!curves.empty()) {
+                newCurve.push_back(curves.back().back());
+            }
+            curves.push_back(newCurve);
+        }
+
+        curves.back().push_back(point);
+
+        if(curves.back().size() > grade){
             glutPostRedisplay();
         }
     }
@@ -41,25 +51,27 @@ void mouse(int button, int state, int x, int y) {
 void display() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    if(controlPoints.size() > grade){
-        float step = 0.01f;
-        GLfloat result[2];
+    for (auto& controlPoints : curves) {
+        if(controlPoints.size() > grade){
+            float step = 0.01f;
+            GLfloat result[2];
 
-        glBegin(GL_LINE_STRIP);
-            for(float t = 0; t <= 1; t += step){
-                glColor3f(1.0f, 1.0f, 1.0f);
-                compute_t(t, result, grade, controlPoints);
-                glVertex2f(result[0], result[1]);
-            }
-        glEnd();
-    }
-    else{
-        glBegin(GL_LINE_STRIP);
-            for(int i = 0; i < controlPoints.size(); i++){
-                glColor3f(1.0f, 0.0f, 0.0f);
-                glVertex2f(controlPoints[i][0], controlPoints[i][1]);
-            }
-        glEnd();
+            glBegin(GL_LINE_STRIP);
+                for(float t = 0; t <= 1; t += step){
+                    glColor3f(1.0f, 1.0f, 1.0f);
+                    compute_t(t, result, grade, controlPoints);
+                    glVertex2f(result[0], result[1]);
+                }
+            glEnd();
+        }
+        else{
+            glBegin(GL_LINE_STRIP);
+                for(int i = 0; i < controlPoints.size(); i++){
+                    glColor3f(1.0f, 0.0f, 0.0f);
+                    glVertex2f(controlPoints[i][0], controlPoints[i][1]);
+                }
+            glEnd();
+        }
     }
 
     glutSwapBuffers();
