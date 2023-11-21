@@ -48,8 +48,8 @@ void display() {
     glEnable(GL_LIGHT0);
     glShadeModel(GL_FLAT);
 
-    glMapGrid2f(20, 0.0f, 1.0f, 20, 0.0f, 1.0f);
-    glEvalMesh2(GL_FILL, 0, 20, 0, 20);
+    glMapGrid2f(10, 0.0f, 1.0f, 10, 0.0f, 1.0f);
+    glEvalMesh2(GL_FILL, 0, 10, 0, 10);
 
     glutSwapBuffers();
 }
