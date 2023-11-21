@@ -18,6 +18,10 @@ GLfloat ctlpoints[4][4][3] = {
     {{3, -3, -3},  {3, -1, -3},  {3, 1, -3},  {3, 3, -3}}
 };
 
+GLfloat E[5][2]={{0,0},{1,0},{1,1},{0,1},{0,0}};
+GLfloat P[5][2]={{0.3,0.3},{0.3,0.7},
+ {0.7,0.7},{0.7,0.3},{0.3,0.3}};
+
 GLUnurbsObj *theNurb;
 
 void init() {
@@ -58,7 +62,12 @@ void display() {
     gluBeginSurface(theNurb);
     gluNurbsSurface(theNurb, 8, knots, 8, knots, 4 * 3, 3, &ctlpoints[0][0][0], 4, 4, GL_MAP2_VERTEX_3);
     
-    // fai un trimming qui
+    gluBeginTrim(theNurb);
+        gluPwlCurve(theNurb,5,&E[0][0],2,GLU_MAP1_TRIM_2);
+    gluEndTrim(theNurb);
+    gluBeginTrim(theNurb);
+        gluPwlCurve(theNurb,5,&P[0][0],2,GLU_MAP1_TRIM_2);
+    gluEndTrim(theNurb);
 
     gluEndSurface(theNurb);
 
